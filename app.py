@@ -1,16 +1,33 @@
 import streamlit as st
 import tensorflow as tf
 import numpy as np
+import gdown
 from tensorflow.keras.models import load_model
 from PIL import Image
 st.write("""# Plant Disesase Predictor Using Python and VGG19""")
+file_id ="1lJcCJFr1mmj-XYmHmpsFG8LvqkTfWAgq"
+url = f'https://drive.google.com/uc?export=download&id={file_id}'
+def load_model_from_drive(url):
+    # Download the model from Google Drive using gdown
+    output_path = './model.keras'  # Temporary path to store the model file
+    gdown.download(url, output_path, quiet=False)
+
+    # Load the model from the file
+    model = tf.keras.models.load_model(output_path)
+    return model
+try:
+    model = load_model_from_drive(url)
+    st.success("Model loaded successfully!")
+except Exception as e:
+    st.error(f"Error loading model: {e}")
+
 class_labels = {
     0: "healthy",
     1: "multiple_diseases",
     2: "Rust Disease",
     3: "Scab Disease"
 }
-model = load_model("vgg19_trainable_crop_disease_model.keras")
+
 
 # Load a test image
 uploaded_image = st.file_uploader("Upload Image of Infected Plant")
